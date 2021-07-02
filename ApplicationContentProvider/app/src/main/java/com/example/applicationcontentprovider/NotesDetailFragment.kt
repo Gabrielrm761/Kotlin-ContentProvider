@@ -15,7 +15,7 @@ import com.example.applicationcontentprovider.databse.NotesProvider.Companion.UR
 
 
 //Ajuda a popular e ver os objetos que recebemos do contentprovider
-class NotesDetailFragment : DialogFragment(), DialogInterface.OnClickListener {
+class NotesDetailFragment: DialogFragment(), DialogInterface.OnClickListener {
 
     private lateinit var noteEditTitle: EditText
     private lateinit var noteEditDescription: EditText
@@ -23,7 +23,7 @@ class NotesDetailFragment : DialogFragment(), DialogInterface.OnClickListener {
 
     companion object {
         private const val EXTRA_ID = "id"
-        fun newInstance(id: Long): NotesDetailFragment{
+        fun newInstance(id: Long): NotesDetailFragment {
             val bundle = Bundle()
             bundle.putLong(EXTRA_ID, id)
 
@@ -37,22 +37,24 @@ class NotesDetailFragment : DialogFragment(), DialogInterface.OnClickListener {
         val view = activity?.layoutInflater?.inflate(R.layout.note_detail, null)
 
         noteEditTitle = view?.findViewById(R.id.note_edt_title) as EditText
-        noteEditDescription = view?.findViewById(R.id.note_edt_description) as EditText
+        noteEditDescription = view.findViewById(R.id.note_edt_description) as EditText
 
-        var newNote =  true
-        if (arguments != null && arguments?.getLong(EXTRA_ID) != 0L){
-            id =arguments?.getLong(EXTRA_ID) as Long
-            val uri = Uri.withAppendedPath(URI_NOTES,id.toString())
-            val cursor = activity?.contentResolver?.query(uri, null, null, null, null)
+        var newNote = true
+        if (arguments != null && arguments?.getLong(EXTRA_ID) != 0L) {
+            id = arguments?.getLong(EXTRA_ID) as Long
+            val uri = Uri.withAppendedPath(URI_NOTES, id.toString())
+            val cursor =
+                activity?.contentResolver?.query(uri, null, null, null, null)
 
-            if (cursor?.moveToNext() as Boolean){
+            if (cursor?.moveToNext() as Boolean ) {
                 newNote = false
                 noteEditTitle.setText(cursor.getString(cursor.getColumnIndex(TITLE_NOTES)))
                 noteEditDescription.setText(cursor.getString(cursor.getColumnIndex(DESCRIPTION_NOTES)))
             }
+            cursor.close()
         }
 
-        return AlertDialog.Builder(activity as Activity)
+        return androidx.appcompat.app.AlertDialog.Builder(activity as Activity)
             .setTitle(if (newNote) "Nova mensagem" else "Editar mensagem")
             .setView(view)
             .setPositiveButton("Salvar", this)
@@ -68,8 +70,8 @@ class NotesDetailFragment : DialogFragment(), DialogInterface.OnClickListener {
 
         if (id != 0L) {
             val uri = Uri.withAppendedPath(URI_NOTES, id.toString())
-            context?.contentResolver?.update(uri,values,null, null)
-        } else{
+            context?.contentResolver?.update(uri, values, null, null)
+        } else {
             context?.contentResolver?.insert(URI_NOTES, values)
         }
     }
